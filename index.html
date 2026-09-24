@@ -161,11 +161,11 @@
   </header>
 
   <!-- Hero Section -->
-  <section class="relative z-10 pt-14 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+  <section class="relative z-10 pt-10 pb-16 md:pt-16 md:pb-24 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <!-- Badges -->
-      <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-700/80 backdrop-blur-md text-xs font-mono text-slate-300 shadow-sm">
           <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
           <span data-i18n="badge_zero_hallucination">Zero-Hallucination Architecture</span>
@@ -177,19 +177,20 @@
       </div>
 
       <!-- Main Headline -->
-      <div class="text-center max-w-4xl mx-auto">
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
-          <span data-i18n="hero_title_prefix">Overcome the Text-to-SQL Crisis.</span> <br>
-          <span data-i18n="hero_title_highlight" class="bg-gradient-to-r from-brand-400 via-emerald-300 to-accent-400 bg-clip-text text-transparent">
+      <div class="text-center max-w-5xl lg:max-w-6xl mx-auto">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[2.85rem] xl:text-[3.25rem] font-extrabold tracking-tight text-white leading-tight">
+          <span data-i18n="hero_title_prefix" class="block">Overcome the Text-to-SQL Crisis.</span>
+          <span data-i18n="hero_title_highlight" class="block bg-gradient-to-r from-brand-400 via-emerald-300 to-accent-400 bg-clip-text text-transparent my-1 sm:my-1.5">
             Deterministic Deductive Intelligence
-          </span> <br class="hidden sm:inline"><span data-i18n="hero_title_suffix">for Enterprise Data Warehouses</span>
+          </span>
+          <span data-i18n="hero_title_suffix" class="block">for Enterprise Data Warehouses</span>
         </h1>
-        <p data-i18n="hero_subtitle" class="mt-6 text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
+        <p data-i18n="hero_subtitle" class="mt-5 text-sm sm:text-base md:text-lg text-slate-300 max-w-4xl mx-auto leading-relaxed">
           Autonomous semantic analytics engine with single-pass profiling, AST security sandbox, multi-layer context fabric (-95% token costs), and native support for 8 DBMS. No SQL hallucinations, zero raw data leakage.
         </p>
 
         <!-- Action CTAs -->
-        <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
           <button onclick="openLicenseModal()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-brand-500 via-emerald-500 to-accent-600 text-white font-semibold text-sm shadow-xl shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.02] transition-all flex items-center justify-center gap-3">
             <i data-lucide="terminal" class="w-4 h-4"></i>
             <span data-i18n="btn_hero_deploy">Contact Sales</span>
@@ -201,7 +202,7 @@
         </div>
 
         <!-- Metric Cards Grid -->
-        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+        <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
           <div class="p-4 rounded-2xl bg-dark-900/60 border border-slate-800 backdrop-blur-sm text-left">
             <div data-i18n="metric_zero_hallucination_val" class="text-2xl lg:text-3xl font-bold font-mono text-brand-400">0%</div>
             <div data-i18n="metric_zero_hallucination_desc" class="text-xs text-slate-400 mt-1 font-medium">SQL hallucinations thanks to AST security validation</div>
