@@ -36,11 +36,20 @@ Unlike standard Text-to-SQL libraries (such as LangChain or LlamaIndex) that fee
 | **🔍 Diagnostic Analysis**<br>*(“Why did revenue drop by 14% in Q3?”)* | ❌ **Not supported.** Outputs only a single flat number without identifying underlying root causes. | ✅ **Segment Contribution Analysis.** Automatically isolates diverging segments and decomposes metric deltas into the exact contribution of each segment. |
 | **🔗 Complex Ad-Hoc Joins**<br>*(10+ tables, nested CTEs, groupings)* | ⚠️ **High risk of join errors.** Can join unrelated tables based on similar column names. | ✅ **Semantic Graph.** Retrieval follows declared foreign keys, and planned mode builds joins only from them. |
 | **📈 What-If Scenario Modeling**<br>*(“What would revenue be if this segment had stayed at its baseline?”)* | ❌ **Not applicable.** Can only query historical snapshots "as is". | ✅ **Built-in Simulation Module.** Simulates an intervention on one segment (fixed value, multiplier, or baseline replacement) in an isolated sandbox; all other segments stay as observed. |
-| **⚡ Token & Context Consumption**<br>*(LLM inference cost savings)* | ❌ **Full schema in every prompt.** Dumps complete DDLs of hundreds of tables into the prompt, overloading context. | ✅ **~94% smaller prompt (internal PoC: 366 vs 6,419 tokens on one test schema).** Proprietary context layer isolates the exact relevant schema subgraph. |
+| **⚡ Token & Context Consumption**<br>*(LLM inference cost savings)* | ❌ **Full schema in every prompt.** Dumps complete DDLs of hundreds of tables into the prompt, overloading context. | ✅ **64–95% smaller prompt (roughly 100K → 5K characters on a schema of 70+ tables; four benchmark schemas, OctaSQL 0.4.0).** Proprietary context layer isolates the exact relevant schema subgraph. |
 | **🛡 Security & Data Integrity**<br>*(Protection against injections, DROP/UPDATE)* | ⚠️ **Risk of data corruption.** Prompt injections can trigger destructive operations. | ✅ **AST Validation + Read-Only Session.** Every query is validated on an SQL AST and executed in a read-only session before it reaches the DBMS. |
 | **🔒 Data Privacy & Compliance**<br>*(GDPR, HIPAA, Banking Secrecy, Data Protection)* | ❌ **Leaks to external APIs.** Schemas and sample data rows are sent to external third-party cloud services. | ✅ **On-Premise / Air-Gapped ready.** Runs inside your security boundary; with a local LLM, no schema, sample values or rows leave it. |
 
-*Prompt-size figures come from an internal proof of concept (one test schema, one local model); results depend on your schema, model and questions.*
+**Measured results, OctaSQL 0.4.0.** Over 130 questions, each run twice, one open-weights LLM served locally; a query is correct when it returns the same rows as a hand-written reference.
+
+| Schema | Full schema in prompt | OctaSQL semantic | OctaSQL planned | Prompt, characters |
+| :--- | :--- | :--- | :--- | :--- |
+| Large enterprise schema, 70+ tables (English questions) | 75.0% | **98.6%** | 91.7% | ≈105K → ≈4.8K (-95%) |
+| Large enterprise schema, 70+ tables (Russian questions) | 72.2% | **94.4%** | 83.3% | ≈100K → ≈4.7K (-95%) |
+| Pagila DVD rental | 93.3% | 93.3% | **100.0%** | ≈6.7K → ≈1.3K (-80%) |
+| Northwind retail | 86.7% | 86.7% | **90.0%** | ≈11.7K → ≈4.2K (-64%) |
+
+*On the large schema the retrieved context is cheaper and more accurate; on small schemas accuracy is equal and the gain is the prompt size. Results move between runs (up to 3 points for semantic, up to 10 for planned) and will differ on your schema, questions and model. Prompt sizes are in characters, not tokens.*
 
 ```
                       ┌─────────────────────────────────────────┐

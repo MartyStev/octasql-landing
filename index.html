@@ -135,6 +135,7 @@
       <nav class="hidden lg:flex items-center gap-5 xl:gap-6 whitespace-nowrap text-[13px] font-medium text-slate-300">
         <a href="#problem" data-i18n="nav_features" class="hover:text-white transition-colors">Features</a>
         <a href="#how-it-works" data-i18n="nav_architecture" class="hover:text-white transition-colors">Architecture</a>
+        <a href="#benchmarks" data-i18n="nav_benchmarks" class="hover:text-white transition-colors">Benchmarks</a>
         <a href="#demo" data-i18n="nav_demo" class="hover:text-white transition-colors">Live Demo</a>
         <a href="#databases" data-i18n="nav_databases" class="hover:text-white transition-colors">DBMS</a>
         <a href="#security" data-i18n="nav_security" class="hover:text-white transition-colors">Security</a>
@@ -174,6 +175,7 @@
       </div>
       <a href="#problem" data-i18n="nav_features" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Features</a>
       <a href="#how-it-works" data-i18n="nav_architecture" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Architecture</a>
+      <a href="#benchmarks" data-i18n="nav_benchmarks" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Benchmarks</a>
       <a href="#demo" data-i18n="nav_demo" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Live Demo</a>
       <a href="#databases" data-i18n="nav_databases" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">DBMS</a>
       <a href="#security" data-i18n="nav_security" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Security</a>
@@ -214,7 +216,7 @@
             <span data-i18n="hero_title_suffix">for Enterprise Data Warehouses</span>
           </h1>
           <p data-i18n="hero_subtitle" class="mt-5 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-            Autonomous semantic analytics engine with single-pass profiling, AST security sandbox, multi-layer context fabric (~94% smaller prompts in our internal PoC), and native support for 8 DBMS. Generated SQL is AST-validated and runs read-only.
+            Autonomous semantic analytics engine with single-pass profiling, AST security sandbox, multi-layer context fabric (up to 95% smaller prompts on our benchmark schemas), and native support for 8 DBMS. Generated SQL is AST-validated and runs read-only.
           </p>
 
           <div class="mt-7 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
@@ -263,8 +265,8 @@
           <div data-i18n="metric_zero_hallucination_desc" class="text-xs text-slate-400 mt-1 font-medium">Every query is AST-validated and runs in a read-only session</div>
         </div>
         <div class="p-4 rounded-2xl bg-dark-900/60 border border-slate-800 backdrop-blur-sm text-left">
-          <div data-i18n="metric_token_val" class="text-xl lg:text-2xl font-bold font-mono whitespace-nowrap text-accent-400">-94% Tokens</div>
-          <div data-i18n="metric_token_desc" class="text-xs text-slate-400 mt-1 font-medium">Smaller LLM prompt in our internal PoC (366 vs 6,419 tokens, one test schema)</div>
+          <div data-i18n="metric_token_val" class="text-xl lg:text-2xl font-bold font-mono whitespace-nowrap text-accent-400">Up to -95%</div>
+          <div data-i18n="metric_token_desc" class="text-xs text-slate-400 mt-1 font-medium">Smaller LLM prompt: roughly 100K → 5K characters on a schema of 70+ tables; 64–95% across four benchmark schemas</div>
         </div>
         <div class="p-4 rounded-2xl bg-dark-900/60 border border-slate-800 backdrop-blur-sm text-left">
           <div data-i18n="metric_speed_val" class="text-xl lg:text-2xl font-bold font-mono whitespace-nowrap text-emerald-400">DuckDB</div>
@@ -367,7 +369,7 @@
                     <span data-i18n="row4_gen_desc">Forced to dump hundreds of table DDLs into every prompt. Massive API bills and 'Lost in the Middle' errors.</span>
                   </td>
                   <td class="py-4 px-6 text-slate-200 text-xs bg-brand-500/[0.03]">
-                    <span class="inline-flex items-center gap-1 text-brand-400 font-mono font-medium mb-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span data-i18n="row4_octa_status">~94% smaller prompt (PoC: 366 vs 6,419 tokens)</span></span><br>
+                    <span class="inline-flex items-center gap-1 text-brand-400 font-mono font-medium mb-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span data-i18n="row4_octa_status">64–95% smaller prompt (roughly 100K → 5K characters on a schema of 70+ tables)</span></span><br>
                     <span data-i18n="row4_octa_desc">Proprietary Context Fabric extracts only the surgical relevant subgraph of the schema, reducing LLM prompt size and inference cost.</span>
                   </td>
                 </tr>
@@ -627,6 +629,71 @@
     </div>
   </section>
 
+  <!-- Benchmarks Section -->
+  <section id="benchmarks" class="relative z-10 py-16 bg-dark-900/40 border-y border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <h2 data-i18n="bench_tag" class="text-xs font-mono uppercase tracking-wider text-brand-400 mb-3">MEASURED RESULTS · OCTASQL 0.4.0</h2>
+        <p data-i18n="bench_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Accuracy and Prompt Size on Four Schemas</p>
+        <p data-i18n="bench_desc" class="mt-4 text-slate-400 text-sm sm:text-base">Over 130 questions on a large enterprise schema (70+ tables, questions in English and in Russian), the Pagila DVD-rental database and the Northwind retail database. A query counts as correct when it returns the same rows as a reference query written by hand.</p>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-dark-900/70 backdrop-blur-md overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-dark-950/80 border-b border-slate-800 text-slate-400 font-mono text-[11px] uppercase tracking-wider">
+              <tr>
+                <th data-i18n="bench_th_schema" class="py-4 px-6 font-semibold">Schema</th>
+                <th data-i18n="bench_th_baseline" class="py-4 px-4 font-semibold">Full schema in prompt</th>
+                <th data-i18n="bench_th_semantic" class="py-4 px-4 font-semibold text-brand-400">OctaSQL semantic</th>
+                <th data-i18n="bench_th_planned" class="py-4 px-4 font-semibold text-accent-400">OctaSQL planned</th>
+                <th data-i18n="bench_th_prompt" class="py-4 px-4 font-semibold">Prompt, characters (full schema → OctaSQL)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-sans">
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td data-i18n="bench_row1" class="py-4 px-6 font-medium text-white">Large enterprise schema, 70+ tables (English questions)</td>
+                  <td class="py-4 px-4 font-mono text-slate-300">75.0%</td>
+                  <td class="py-4 px-4 font-mono font-bold text-brand-400">98.6%</td>
+                  <td class="py-4 px-4 font-mono font-bold text-accent-400">91.7%</td>
+                  <td data-i18n="bench_prompt1" class="py-4 px-4 font-mono text-slate-300 whitespace-nowrap">≈105K <span class="text-slate-500">→</span> <span class="text-emerald-400">≈4.8K</span> <span class="text-slate-500 text-xs">(-95%)</span></td>
+                </tr>
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td data-i18n="bench_row2" class="py-4 px-6 font-medium text-white">Large enterprise schema, 70+ tables (Russian questions)</td>
+                  <td class="py-4 px-4 font-mono text-slate-300">72.2%</td>
+                  <td class="py-4 px-4 font-mono font-bold text-brand-400">94.4%</td>
+                  <td class="py-4 px-4 font-mono font-bold text-accent-400">83.3%</td>
+                  <td data-i18n="bench_prompt2" class="py-4 px-4 font-mono text-slate-300 whitespace-nowrap">≈100K <span class="text-slate-500">→</span> <span class="text-emerald-400">≈4.7K</span> <span class="text-slate-500 text-xs">(-95%)</span></td>
+                </tr>
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td data-i18n="bench_row3" class="py-4 px-6 font-medium text-white">Pagila DVD rental</td>
+                  <td class="py-4 px-4 font-mono text-slate-300">93.3%</td>
+                  <td class="py-4 px-4 font-mono font-bold text-brand-400">93.3%</td>
+                  <td class="py-4 px-4 font-mono font-bold text-accent-400">100.0%</td>
+                  <td data-i18n="bench_prompt3" class="py-4 px-4 font-mono text-slate-300 whitespace-nowrap">≈6.7K <span class="text-slate-500">→</span> <span class="text-emerald-400">≈1.3K</span> <span class="text-slate-500 text-xs">(-80%)</span></td>
+                </tr>
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td data-i18n="bench_row4" class="py-4 px-6 font-medium text-white">Northwind retail</td>
+                  <td class="py-4 px-4 font-mono text-slate-300">86.7%</td>
+                  <td class="py-4 px-4 font-mono font-bold text-brand-400">86.7%</td>
+                  <td class="py-4 px-4 font-mono font-bold text-accent-400">90.0%</td>
+                  <td data-i18n="bench_prompt4" class="py-4 px-4 font-mono text-slate-300 whitespace-nowrap">≈11.7K <span class="text-slate-500">→</span> <span class="text-emerald-400">≈4.2K</span> <span class="text-slate-500 text-xs">(-64%)</span></td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mt-6 max-w-4xl mx-auto space-y-3 text-xs sm:text-sm text-slate-400 leading-relaxed">
+        <p data-i18n="bench_modes">Semantic: the LLM writes SQL from the retrieved context. Planned: the LLM returns a typed plan and OctaSQL compiles the SQL.</p>
+        <p data-i18n="bench_note1">Reading the table: on the large enterprise schema the retrieved context is both cheaper and more accurate than putting the whole schema in the prompt (94–99% against 72–75%). On small schemas the full schema fits and accuracy is equal; the gain there is a 64–80% smaller prompt. Planned mode builds SQL from a typed plan: it reached 100% on Pagila and is weakest on Russian-language questions over the large schema.</p>
+        <p data-i18n="bench_note2" class="text-slate-500 italic">How it was measured: our own question sets, each question run twice, one open-weights LLM served locally. Results move between runs, by up to 3 points for semantic mode and up to 10 for planned mode, and will differ on your schema, questions and model. Prompt sizes are in characters, not tokens.</p>
+      </div>
+
+    </div>
+  </section>
+
   <!-- MCP Protocol Section -->
   <section id="mcp" class="relative z-10 py-14 bg-dark-900/40 border-t border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -647,7 +714,7 @@
           <div class="space-y-3 text-xs sm:text-sm text-slate-200">
             <div class="flex items-center gap-3">
               <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 shrink-0"></i>
-              <span data-i18n="mcp_tools">Tools: observe_metric, drilldown_metric, observe_graph, simulate_what_if, deduce, get_catalog_snapshot, list_states</span>
+              <span data-i18n="mcp_tools">Tools: query, observe_metric, drilldown_metric, observe_graph, simulate_what_if, deduce, get_catalog_snapshot, list_states</span>
             </div>
             <div class="flex items-center gap-3">
               <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 shrink-0"></i>
@@ -734,7 +801,7 @@
             </div>
             <h3 data-i18n="sec2_title" class="text-xl font-bold text-white mb-3">Cryptographic Licensing</h3>
             <p data-i18n="sec2_desc" class="text-sm text-slate-400 leading-relaxed">
-              Offline Ed25519 signature verification with hardware node fingerprinting (machine-id & MAC). Reduces unauthorized instance duplication.
+              Offline Ed25519 signature verification; a license can be locked to a node fingerprint (machine-id & MAC). The release image carries the vendor public key and ignores any override from the environment.
             </p>
           </div>
           <div data-i18n="sec2_tag_bot" class="mt-6 pt-4 border-t border-slate-800 text-xs font-mono text-brand-400">
@@ -749,11 +816,11 @@
             </div>
             <h3 data-i18n="sec3_title" class="text-xl font-bold text-white mb-3">IP Protection & Hardened Core</h3>
             <p data-i18n="sec3_desc" class="text-sm text-slate-400 leading-relaxed">
-              Distribution compiled into optimized bytecode (.pyc) with source files (.py) removed, which raises the bar for casual reverse engineering.
+              The release image ships the engine compiled to a native module (Nuitka) with no Python sources, which raises the bar for casual reverse engineering.
             </p>
           </div>
           <div data-i18n="sec3_tag_bot" class="mt-6 pt-4 border-t border-slate-800 text-xs font-mono text-accent-400">
-            Bytecode Hardened Release
+            Native Compiled Release
           </div>
         </div>
 
@@ -854,7 +921,7 @@
           <div>
             <div class="flex items-center justify-between mb-3">
               <span data-i18n="rm_card4_tag" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[11px] font-bold">
-                PLANNED MODULE
+                PARTLY SHIPPED IN 0.4.0
               </span>
               <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5">
                 <i data-lucide="zap" class="w-3.5 h-3.5 text-yellow-400"></i> <span data-i18n="rm_card4_badge">LLM Cost Optimization</span>
@@ -862,12 +929,12 @@
             </div>
             <h3 data-i18n="rm_card4_title" class="text-lg font-bold text-white mb-2">4. Semantic Vector Query Cache</h3>
             <p data-i18n="rm_card4_desc" class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-              Embedding query indexing with Redis/Qdrant cosine similarity matching. Reuses verified AST execution plans for semantically equivalent questions, cutting repeated LLM calls.
+              Shipped in 0.4.0: a plan cache in the local DuckDB catalog. A repeated question is answered from the stored plan with no LLM call (0–145 prompt characters in our benchmarks), and with an embedding endpoint a paraphrase finds the same plan. Planned: Redis/Qdrant backends and a cache shared across nodes.
             </p>
           </div>
           <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2 text-[11px] font-mono text-indigo-400">
             <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-            <span data-i18n="rm_card4_status">Cosine Similarity Matching Engine</span>
+            <span data-i18n="rm_card4_status">Plan cache shipped · shared backends planned</span>
           </div>
         </div>
 
@@ -933,7 +1000,7 @@
                 <div id="savedTokensVal" class="text-sm font-bold font-mono text-white">3.5B tokens</div>
               </div>
             </div>
-            <p data-i18n="roi_assumptions" class="text-[11px] text-slate-500 italic text-left">Illustrative estimate. Assumes ~450 tokens per table in a full-schema prompt vs ~1,200 tokens of retrieved context. Actual results depend on your schema, model and questions.</p>
+            <p data-i18n="roi_assumptions" class="text-[11px] text-slate-500 italic text-left">Illustrative estimate. Assumes ~450 tokens per table in a full-schema prompt vs ~1,200 tokens of retrieved context (measured on a schema of 70+ tables: roughly 1,400 characters per table in a full-schema prompt, 4–5 thousand characters of retrieved context). Actual results depend on your schema, model and questions.</p>
             <button onclick="openLicenseModal()" data-i18n="btn_roi_request" class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium text-xs transition-colors">
               Get Custom Infrastructure Audit
             </button>
