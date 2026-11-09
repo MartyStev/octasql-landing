@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://martystev.github.io/octasql-landing/sitemap.xml

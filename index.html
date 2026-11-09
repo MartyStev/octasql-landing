@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OctaSQL — Text-to-SQL for Local LLMs: Validated, Read-Only, On-Premise</title>
+  <meta name="description" content="OctaSQL is built for local open-weight LLMs (vLLM, Ollama): it sits between the model and your data warehouse, it gives the model only the schema the question needs, validates its SQL on an AST and runs it read-only. MCP server, segment contribution analysis, on-premise. SQL on PostgreSQL, Greenplum, ClickHouse, MySQL, MS SQL, BigQuery, Snowflake; DuckDB/Parquet for scan and analysis.">
+  <meta name="keywords" content="OctaSQL, Text-to-SQL, Semantic Layer, LLM Analytics, DuckDB, ClickHouse, PostgreSQL, Greenplum, Snowflake, BigQuery, MCP Server, Enterprise AI">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://martystev.github.io/octasql-landing/">
+  
+  <!-- OpenGraph Meta Tags -->
+  <meta property="og:site_name" content="OctaSQL Enterprise">
+  <meta property="og:title" content="OctaSQL — Text-to-SQL for Local LLMs: Validated, Read-Only, On-Premise">
+  <meta property="og:description" content="Your local LLM writes the SQL; OctaSQL gives it only the schema it needs, validates the SQL and runs it read-only.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://martystev.github.io/octasql-landing/">
+  
+  <!-- Twitter Card Tags -->
+  <meta property="og:image" content="https://martystev.github.io/octasql-landing/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://martystev.github.io/octasql-landing/assets/og-image.png">
+  <meta name="twitter:title" content="OctaSQL — Text-to-SQL for Local LLMs: Validated, Read-Only, On-Premise">
+  <meta name="twitter:description" content="Your local LLM writes the SQL; OctaSQL gives it only the schema it needs, validates the SQL and runs it read-only.">
+  
+  <!-- Schema.org JSON-LD Microdata -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "OctaSQL",
+    "operatingSystem": "Linux (Docker, Kubernetes)",
+    "applicationCategory": "BusinessIntelligenceApplication",
+    "url": "https://martystev.github.io/octasql-landing/",
+    "description": "OctaSQL is built for local open-weight LLMs (vLLM, Ollama): it sits between the model and your data warehouse, it gives the model only the schema the question needs, validates its SQL on an AST and runs it read-only. MCP server, segment contribution analysis, on-premise. SQL on PostgreSQL, Greenplum, ClickHouse, MySQL, MS SQL, BigQuery, Snowflake; DuckDB/Parquet for scan and analysis."
+  }
+  </script>
+  
+  <!-- Constellation Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 3L19 7.5L21 15L15 21L7 20L3 13L5 6L12 3Z' stroke='%2334d399' stroke-width='1.2' stroke-opacity='0.7'/%3E%3Cpath d='M12 3L12 12M19 7.5L12 12M21 15L12 12M15 21L12 12M7 20L12 12M3 13L12 12M5 6L12 12' stroke='%23818cf8' stroke-width='0.8' stroke-opacity='0.5'/%3E%3Ccircle cx='12' cy='3' r='1.6' fill='%2334d399'/%3E%3Ccircle cx='19' cy='7.5' r='1.4' fill='%23818cf8'/%3E%3Ccircle cx='21' cy='15' r='1.5' fill='%2334d399'/%3E%3Ccircle cx='15' cy='21' r='1.4' fill='%23818cf8'/%3E%3Ccircle cx='7' cy='20' r='1.5' fill='%2334d399'/%3E%3Ccircle cx='3' cy='13' r='1.4' fill='%23818cf8'/%3E%3Ccircle cx='5' cy='6' r='1.5' fill='%2334d399'/%3E%3Ccircle cx='12' cy='12' r='2.2' fill='%23ffffff'/%3E%3C/svg%3E">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            },
+            accent: {
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+            },
+            dark: {
+              950: '#030712',
+              900: '#0B0F19',
+              850: '#111827',
+              800: '#1F2937',
+              700: '#374151',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css?v=3.2">
+</head>
+<body class="bg-dark-950 text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white min-h-screen flex flex-col overflow-x-hidden">
+
+  <!-- Background Gradients & Grid -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-tr from-brand-600/15 to-accent-500/15 blur-[120px] rounded-full"></div>
+    <div class="absolute top-[45%] -left-40 w-[600px] h-[400px] bg-brand-500/10 blur-[140px] rounded-full"></div>
+    <div class="absolute top-[70%] -right-40 w-[600px] h-[500px] bg-accent-600/10 blur-[140px] rounded-full"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#1f293712_1px,transparent_1px),linear-gradient(to_bottom,#1f293712_1px,transparent_1px)] bg-[size:32px_32px]"></div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-dark-950/85 border-b border-slate-800/60 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Constellation Logo -->
+      <a href="#" class="flex items-center gap-2.5 shrink-0 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 via-emerald-600 to-accent-600 p-1.5 flex items-center justify-center text-white shadow-md shadow-brand-500/25 group-hover:scale-105 group-hover:shadow-brand-500/40 transition-all">
+          <svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.5L18.5 6.5L21 14L15.5 21L8.5 20.5L3 13.5L5.5 6L12 2.5Z" stroke="white" stroke-width="1.2" stroke-opacity="0.65"/>
+            <path d="M12 2.5L12 11.5M18.5 6.5L12 11.5M21 14L12 11.5M15.5 21L12 11.5M8.5 20.5L12 11.5M3 13.5L12 11.5M5.5 6L12 11.5" stroke="white" stroke-width="0.8" stroke-opacity="0.35"/>
+            <circle cx="12" cy="2.5" r="1.6" fill="#6ee7b7"/>
+            <circle cx="18.5" cy="6.5" r="1.4" fill="#a5b4fc"/>
+            <circle cx="21" cy="14" r="1.5" fill="#6ee7b7"/>
+            <circle cx="15.5" cy="21" r="1.4" fill="#a5b4fc"/>
+            <circle cx="8.5" cy="20.5" r="1.5" fill="#6ee7b7"/>
+            <circle cx="3" cy="13.5" r="1.4" fill="#a5b4fc"/>
+            <circle cx="5.5" cy="6" r="1.5" fill="#6ee7b7"/>
+            <circle cx="12" cy="11.5" r="2.2" fill="#ffffff"/>
+            <circle cx="12" cy="11.5" r="3.2" stroke="#ffffff" stroke-width="0.6" stroke-opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-bold tracking-tight text-white font-sans">
+            Octa<span class="text-brand-400">SQL</span>
+          </span>
+          <span class="hidden xl:inline text-[11px] font-mono px-1.5 py-0.5 rounded-md bg-brand-500/10 text-brand-400 border border-brand-500/20 font-semibold tracking-wider uppercase">
+            Enterprise
+          </span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav: fixed ends (Architecture, MCP), the sections between them cycle in a ticker -->
+      <nav aria-label="Main navigation" class="hidden lg:flex items-center gap-5 whitespace-nowrap text-[13px] font-medium text-slate-300">
+        <a href="#problem" data-i18n="nav_features" data-spy="#problem" class="nav-link hidden xl:inline">Features</a>
+        <div class="nav-rail">
+          <a href="#how-it-works" data-i18n="nav_architecture" data-spy="#how-it-works" class="nav-link nav-anchor">Architecture</a>
+          <div class="nav-ticker" id="navTicker">
+            <button type="button" class="nav-ticker-trigger" id="navTickerTrigger" aria-haspopup="menu" aria-expanded="false" aria-controls="navTickerMenu" data-i18n-aria="nav_more">
+              <span class="nav-ticker-window" aria-hidden="true">
+              <span class="nav-ticker-slide" data-target="#benchmarks" data-i18n="nav_benchmarks">Benchmarks</span>
+              <span class="nav-ticker-slide" data-target="#demo" data-i18n="nav_demo">Example</span>
+              <span class="nav-ticker-slide" data-target="#databases" data-i18n="nav_databases">DBMS</span>
+              <span class="nav-ticker-slide" data-target="#security" data-i18n="nav_security">Security</span>
+              <span class="nav-ticker-slide" data-target="#roadmap" data-i18n="nav_roadmap">Roadmap</span>
+              </span>
+              <svg class="nav-ticker-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="nav-ticker-progress" aria-hidden="true"></span>
+            </button>
+            <div class="nav-ticker-menu" id="navTickerMenu" role="menu">
+            <a href="#benchmarks" role="menuitem" data-i18n="nav_benchmarks" class="nav-ticker-link">Benchmarks</a>
+            <a href="#demo" role="menuitem" data-i18n="nav_demo" class="nav-ticker-link">Example</a>
+            <a href="#databases" role="menuitem" data-i18n="nav_databases" class="nav-ticker-link">DBMS</a>
+            <a href="#security" role="menuitem" data-i18n="nav_security" class="nav-ticker-link">Security</a>
+            <a href="#roadmap" role="menuitem" data-i18n="nav_roadmap" class="nav-ticker-link">Roadmap</a>
+            <a href="#problem" role="menuitem" data-i18n="nav_features" class="nav-ticker-link xl:hidden">Features</a>
+            <a href="#pricing" role="menuitem" data-i18n="nav_pricing" class="nav-ticker-link xl:hidden">Pricing</a>
+            </div>
+          </div>
+          <a href="#mcp" data-i18n="nav_mcp" data-spy="#mcp" class="nav-link nav-anchor">MCP Server</a>
+        </div>
+        <a href="#pricing" data-i18n="nav_pricing" data-spy="#pricing" class="nav-link hidden xl:inline">Pricing</a>
+      </nav>
+
+      <!-- Right Controls: Language Switcher & CTA -->
+      <div class="hidden sm:flex items-center gap-3 shrink-0">
+        <!-- Language Switcher Pill -->
+        <div class="flex items-center bg-dark-900 border border-slate-800 rounded-lg p-0.5">
+          <button onclick="setLanguage('en')" data-lang="en" class="lang-btn px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-brand-500 text-dark-950 transition-all shadow-sm">EN</button>
+          <button onclick="setLanguage('ru')" data-lang="ru" class="lang-btn px-2.5 py-1 rounded-md text-xs font-mono text-slate-400 hover:text-white transition-all">RU</button>
+        </div>
+
+        <button onclick="openLicenseModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-white font-medium text-xs shadow-lg shadow-brand-500/20 hover:shadow-brand-500/35 transition-all flex items-center gap-2 whitespace-nowrap">
+          <span data-i18n="btn_request_key">Contact Sales</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" aria-label="Menu" aria-controls="mobileMenu" class="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobileMenu" class="hidden lg:hidden border-b border-slate-800 bg-dark-900/95 px-6 py-5 space-y-3 font-medium text-sm">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <span class="text-xs text-slate-400 font-mono">Language / Язык:</span>
+        <div class="flex items-center bg-dark-950 border border-slate-800 rounded-lg p-0.5">
+          <button onclick="setLanguage('en')" data-lang="en" class="lang-btn px-3 py-1 rounded-md text-xs font-mono font-bold bg-brand-500 text-dark-950">EN</button>
+          <button onclick="setLanguage('ru')" data-lang="ru" class="lang-btn px-3 py-1 rounded-md text-xs font-mono text-slate-400">RU</button>
+        </div>
+      </div>
+      <a href="#problem" data-i18n="nav_features" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Features</a>
+      <a href="#how-it-works" data-i18n="nav_architecture" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Architecture</a>
+      <a href="#benchmarks" data-i18n="nav_benchmarks" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Benchmarks</a>
+      <a href="#demo" data-i18n="nav_demo" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Example</a>
+      <a href="#databases" data-i18n="nav_databases" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">DBMS</a>
+      <a href="#security" data-i18n="nav_security" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Security</a>
+      <a href="#roadmap" data-i18n="nav_roadmap" class="block text-accent-400 hover:text-white py-1" onclick="toggleMobileMenu()">Roadmap</a>
+      <a href="#mcp" data-i18n="nav_mcp" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">MCP Server</a>
+      <a href="#pricing" data-i18n="nav_pricing" class="block text-slate-300 hover:text-white py-1" onclick="toggleMobileMenu()">Pricing</a>
+      <button onclick="openLicenseModal(); toggleMobileMenu();" data-i18n="btn_request_key" class="w-full mt-3 py-2.5 rounded-xl bg-brand-500 text-white font-medium text-xs text-center shadow-md shadow-brand-500/20">
+        Contact Sales
+      </button>
+    </div>
+  </header>
+
+  <main>
+  <!-- Hero Section -->
+  <section class="relative z-10 pt-10 pb-14 md:pt-14 md:pb-16 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+
+        <!-- Left: copy -->
+        <div class="lg:col-span-7 text-center lg:text-left">
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-5">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-700/80 backdrop-blur-md text-xs font-mono text-slate-300 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
+              <span data-i18n="badge_zero_hallucination">AST-Validated Read-Only SQL</span>
+            </div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-500/10 border border-accent-500/20 text-xs font-mono text-accent-400">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              <span data-i18n="badge_air_gapped">Built for Local LLMs: vLLM, Ollama, Air-Gapped</span>
+            </div>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl xl:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+            <span data-i18n="hero_title_prefix">Your Local LLM Writes the SQL.</span>
+            <span data-i18n="hero_title_highlight" class="bg-gradient-to-r from-brand-400 via-emerald-300 to-accent-400 bg-clip-text text-transparent">OctaSQL Checks It</span>
+            <span data-i18n="hero_title_suffix">and Runs It Read-Only</span>
+          </h1>
+          <p data-i18n="hero_subtitle" class="mt-5 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">OctaSQL is built for teams that run their own open-weight model (vLLM, Ollama) next to the data: it gives the model only the schema the question needs, checks its SQL and runs it read-only. The context shrinks by up to 92%, so a small model fits a large schema and answers no worse; the GPU spends about five times fewer tokens per question and answers come about twice as fast. Through a paid API, the same tokens are the bill. Cloud models (Claude, GPT) connect over the same MCP.</p>
+
+          <div class="mt-7 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <button onclick="openLicenseModal()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-brand-500 via-emerald-500 to-accent-600 text-white font-semibold text-sm shadow-xl shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.02] transition-all flex items-center justify-center gap-3">
+              <i data-lucide="terminal" class="w-4 h-4"></i>
+              <span data-i18n="btn_hero_deploy">Contact Sales</span>
+            </button>
+            <a href="#demo" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-200 font-medium text-sm hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
+              <i data-lucide="play" class="w-4 h-4 text-brand-400"></i>
+              <span data-i18n="btn_hero_demo">See an Example</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: query pipeline preview -->
+        <div class="hidden sm:block lg:col-span-5" aria-hidden="true">
+          <div class="glass-panel glow-brand rounded-2xl overflow-hidden text-left font-mono text-xs">
+            <div class="flex items-center gap-2 px-4 py-2.5 border-b border-slate-800 bg-dark-900/60">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500/70"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-brand-500/70"></span>
+              <span class="ml-2 text-slate-500">octasql &middot; read-only session</span>
+            </div>
+            <div class="p-4 space-y-3 leading-relaxed">
+              <div><span class="text-slate-500">&gt;</span> <span class="text-slate-200" data-i18n="hero_preview_q">Why did revenue drop in EMEA last month?</span></div>
+              <div class="rounded-lg bg-slate-950/70 border border-slate-800 p-3 text-slate-300">
+                <span class="code-keyword">SELECT</span> channel,<br>
+                &nbsp;&nbsp;<span class="code-func">SUM</span>(amount) <span class="code-keyword">FILTER</span> (<span class="code-keyword">WHERE</span> month = <span class="code-string">'2026-10'</span>)<br>
+                &nbsp;&nbsp;- <span class="code-func">SUM</span>(amount) <span class="code-keyword">FILTER</span> (<span class="code-keyword">WHERE</span> month = <span class="code-string">'2026-09'</span>) <span class="code-keyword">AS</span> delta<br>
+                <span class="code-keyword">FROM</span> sales <span class="code-keyword">WHERE</span> region = <span class="code-string">'EMEA'</span><br>
+                <span class="code-keyword">GROUP BY</span> channel <span class="code-keyword">ORDER BY</span> delta<span class="terminal-cursor ml-1"></span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-2 py-1 rounded-md bg-brand-500/10 border border-brand-500/30 text-brand-400">&#10003; AST valid</span>
+                <span class="px-2 py-1 rounded-md bg-brand-500/10 border border-brand-500/30 text-brand-400">&#10003; read-only</span>
+                <span class="px-2 py-1 rounded-md bg-accent-500/10 border border-accent-500/30 text-accent-400">DuckDB state</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric Cards Grid -->
+      <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="p-4 rounded-2xl bg-dark-900/60 border border-slate-800 backdrop-blur-sm text-left">
+          <div data-i18n="metric_zero_hallucination_val" class="text-xl lg:text-2xl font-bold font-mono whitespace-nowrap text-brand-400">Read-only</div>
+          <div data-i18n="metric_zero_hallucination_desc" class="text-xs text-slate-400 mt-1 font-medium">Every query is AST-validated; on Postgres, Greenplum, MySQL and ClickHouse it runs in a read-only transaction</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-dark-900/60 border border-slate-800 backdrop-blur-sm text-left">
+          <div data-i18n="metric_token_val" class="text-xl lg:text-2xl font-bold font-mono whitespace-nowrap text-accent-400">-92%</div>
+          <div data-i18n="metric_token_desc" class="text-xs text-slate-400 mt-1 font-medium">Prompt for your model on a 75-table schema: ≈33K → ≈2.5K characters, accuracy 56.9% → 91.7%</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-dark-900/60 border border-slate-800 backdrop-blur-sm text-left">
+          <div data-i18n="metric_speed_val" class="text-xl lg:text-2xl font-bold font-mono whitespace-nowrap text-emerald-400">+30 pts</div>
+          <div data-i18n="metric_speed_desc" class="text-xs text-slate-400 mt-1 font-medium">Accuracy of the same general model on 33 public databases: 43.5% alone, 73.8% through OctaSQL</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-dark-900/60 border border-slate-800 backdrop-blur-sm text-left">
+          <div data-i18n="metric_db_val" class="text-xl lg:text-2xl font-bold font-mono whitespace-nowrap text-indigo-400">7 DBMS + DuckDB</div>
+          <div data-i18n="metric_db_desc" class="text-xs text-slate-400 mt-1 font-medium">SQL on Postgres, Greenplum, ClickHouse, MySQL, MS SQL, BigQuery, Snowflake; DuckDB/Parquet for scan and analysis</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Database Support Strip -->
+  <section id="databases" class="relative z-10 py-8 border-y border-slate-800/80 bg-dark-900/40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p data-i18n="dbms_strip_title" class="text-center text-xs font-mono uppercase tracking-widest text-slate-400 mb-6">CONNECTORS FOR ANALYTICAL AND TRANSACTIONAL DATABASES</p>
+      <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-slate-400 font-mono text-xs sm:text-sm">
+        <div class="flex items-center gap-2 hover:text-white transition-colors"><i data-lucide="database" class="w-4 h-4 text-blue-400"></i> PostgreSQL</div>
+        <div class="flex items-center gap-2 hover:text-white transition-colors"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> ClickHouse</div>
+        <div class="flex items-center gap-2 hover:text-white transition-colors"><i data-lucide="server" class="w-4 h-4 text-emerald-400"></i> Greenplum MPP</div>
+        <div class="flex items-center gap-2 hover:text-white transition-colors"><i data-lucide="cloud" class="w-4 h-4 text-cyan-400"></i> Snowflake</div>
+        <div class="flex items-center gap-2 hover:text-white transition-colors"><i data-lucide="sparkles" class="w-4 h-4 text-blue-500"></i> Google BigQuery</div>
+        <div class="flex items-center gap-2 hover:text-white transition-colors"><i data-lucide="layers" class="w-4 h-4 text-yellow-400"></i> DuckDB / Parquet</div>
+        <div class="flex items-center gap-2 hover:text-white transition-colors"><i data-lucide="boxes" class="w-4 h-4 text-orange-400"></i> MySQL / MariaDB</div>
+        <div class="flex items-center gap-2 hover:text-white transition-colors"><i data-lucide="hard-drive" class="w-4 h-4 text-red-400"></i> MS SQL Server</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Section: The Text-to-SQL Crisis -->
+  <section id="problem" class="relative z-10 py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <h2 data-i18n="problem_tag" class="text-xs font-mono uppercase tracking-wider text-red-400 mb-3">WHERE PLAIN TEXT-TO-SQL BREAKS</h2>
+        <p data-i18n="problem_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Why Plain Text-to-SQL (LangChain / LlamaIndex) Breaks on Enterprise Warehouses</p>
+        <p data-i18n="problem_desc" class="mt-4 text-slate-400 text-sm sm:text-base">Sending raw DDL to an LLM without a semantic layer leads to wrong joins, invented columns and unchecked SQL.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        <!-- The flawed way -->
+        <div class="p-5 sm:p-6 rounded-2xl bg-red-950/20 border border-red-900/40 flex items-start gap-4">
+          <i data-lucide="alert-triangle" class="w-6 h-6 text-red-400 shrink-0 mt-0.5"></i>
+          <div>
+            <span data-i18n="flawed_title" class="inline-block px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 font-mono text-[11px] font-semibold uppercase">Generic Text-to-SQL</span>
+            <h3 data-i18n="flawed_h3" class="mt-2 text-lg font-bold text-white">Black Box with Hallucinations</h3>
+            <p data-i18n="flawed_footer" class="mt-1 text-sm text-red-300">Result: unreliable answers, and leadership does not trust AI answers.</p>
+          </div>
+        </div>
+        <!-- The OctaSQL way -->
+        <div class="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-brand-950/40 via-dark-900 to-accent-950/30 border border-brand-500/40 shadow-xl shadow-brand-500/10 flex items-start gap-4">
+          <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-400 shrink-0 mt-0.5"></i>
+          <div>
+            <span data-i18n="solution_title" class="inline-block px-2.5 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/30 font-mono text-[11px] font-semibold uppercase">OctaSQL Enterprise</span>
+            <h3 data-i18n="solution_h3" class="mt-2 text-lg font-bold text-white">Validated, Read-Only SQL with Segment Analysis</h3>
+            <p data-i18n="solution_footer_acc" class="mt-1 text-sm text-brand-300">Every query is AST-validated before execution</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparative Table: Base Text-to-SQL vs OctaSQL Enterprise -->
+      <div class="mt-12">
+        <div class="text-center max-w-3xl mx-auto mb-8">
+          <h3 data-i18n="table_title" class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Comparison: Plain Text-to-SQL and OctaSQL</h3>
+          <p data-i18n="table_subtitle" class="mt-2 text-slate-400 text-xs sm:text-sm">
+            How different classes of analytical requests are handled by standard LLM libraries vs OctaSQL Enterprise
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-800 bg-dark-900/70 backdrop-blur-md overflow-hidden shadow-2xl">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-dark-950/80 border-b border-slate-800 text-slate-400 font-mono text-[11px] uppercase tracking-wider">
+                <tr>
+                  <th data-i18n="th_query_class" class="py-4 px-6 font-semibold w-1/4">Query Class / Business Problem</th>
+                  <th data-i18n="th_generic_ai" class="py-4 px-6 font-semibold w-3/8 text-red-400/90">Plain Text-to-SQL (LangChain and similar)</th>
+                  <th data-i18n="th_octasql" class="py-4 px-6 font-semibold w-3/8 text-brand-400">OctaSQL</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 text-slate-300 font-sans">
+                <!-- Row 1: Token Efficiency -->
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td class="py-4 px-6 font-medium text-white">
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="cpu" class="w-4 h-4 text-purple-400 shrink-0"></i>
+                      <span><strong data-i18n="row4_title">Token & LLM Context Efficiency:</strong><br><span data-i18n="row4_sub" class="text-xs text-slate-400 font-normal">LLM inference cost reduction</span></span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-400 text-xs">
+                    <span class="inline-flex items-center gap-1 text-red-400 font-mono font-medium mb-1"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="row4_gen_status">Full schema in every prompt</span></span><br>
+                    <span data-i18n="row4_gen_desc">Often sends the DDL of every table: on large schemas that means long prompts and 'lost in the middle' errors.</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-200 text-xs bg-brand-500/[0.03]">
+                    <span class="inline-flex items-center gap-1 text-brand-400 font-mono font-medium mb-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span data-i18n="row4_octa_status">92% smaller prompt (≈33K → ≈2.5K characters on a 75-table schema)</span></span><br>
+                    <span data-i18n="row4_octa_desc">The context layer passes only the relevant part of the schema, cutting prompt size and input cost.</span>
+                  </td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td class="py-4 px-6 font-medium text-white">
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="help-circle" class="w-4 h-4 text-accent-400 shrink-0"></i>
+                      <span><strong data-i18n="row1_title">Diagnostic Root-Cause Analysis:</strong><br><span data-i18n="row1_sub" class="text-xs text-slate-400 font-normal">“Why did revenue drop 14% in Q3?”</span></span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-400 text-xs">
+                    <span class="inline-flex items-center gap-1 text-red-400 font-mono font-medium mb-1"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="row1_gen_status">No Built-In Decomposition</span></span><br>
+                    <span data-i18n="row1_gen_desc">Returns the number; breaking the change down by segment is left to the user.</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-200 text-xs bg-brand-500/[0.03]">
+                    <span class="inline-flex items-center gap-1 text-brand-400 font-mono font-medium mb-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span data-i18n="row1_octa_status">Segment Contribution Analysis</span></span><br>
+                    <span data-i18n="row1_octa_desc">Automatically isolates diverging segments and breaks the total change down into the exact contribution of each segment (region, category, channel).</span>
+                  </td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td class="py-4 px-6 font-medium text-white">
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="git-merge" class="w-4 h-4 text-blue-400 shrink-0"></i>
+                      <span><strong data-i18n="row2_title">Multi-Table Joins:</strong><br><span data-i18n="row2_sub" class="text-xs text-slate-400 font-normal">Several tables, CTEs, groupings</span></span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-400 text-xs">
+                    <span class="inline-flex items-center gap-1 text-amber-400 font-mono font-medium mb-1"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> <span data-i18n="row2_gen_status">High risk of join errors</span></span><br>
+                    <span data-i18n="row2_gen_desc">Can join on look-alike column names and multiply rows.</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-200 text-xs bg-brand-500/[0.03]">
+                    <span class="inline-flex items-center gap-1 text-brand-400 font-mono font-medium mb-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span data-i18n="row2_octa_status">Foreign-Key-Aware Retrieval</span></span><br>
+                    <span data-i18n="row2_octa_desc">Retrieval follows foreign keys, declared or inferred and checked on the data; planned mode joins only along them.</span>
+                  </td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td class="py-4 px-6 font-medium text-white">
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="trending-up" class="w-4 h-4 text-yellow-400 shrink-0"></i>
+                      <span><strong data-i18n="row3_title">Segment What-If Simulations:</strong><br><span data-i18n="row3_sub" class="text-xs text-slate-400 font-normal">“What would revenue be if this segment had stayed at its baseline?”</span></span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-400 text-xs">
+                    <span class="inline-flex items-center gap-1 text-red-400 font-mono font-medium mb-1"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="row3_gen_status">No Built-In Simulation</span></span><br>
+                    <span data-i18n="row3_gen_desc">Generic Text-to-SQL can only query historical data 'as is' without scenario modeling.</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-200 text-xs bg-brand-500/[0.03]">
+                    <span class="inline-flex items-center gap-1 text-brand-400 font-mono font-medium mb-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span data-i18n="row3_octa_status">Built-in Simulation Engine</span></span><br>
+                    <span data-i18n="row3_octa_desc">Simulates an intervention on one segment (fixed value, multiplier, or baseline replacement) in an isolated sandbox; all other segments stay as observed.</span>
+                  </td>
+                </tr>
+
+                <!-- Row 5: Security -->
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td class="py-4 px-6 font-medium text-white">
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="shield-alert" class="w-4 h-4 text-red-400 shrink-0"></i>
+                      <span><strong data-i18n="row5_title">Security & Database Integrity:</strong><br><span data-i18n="row5_sub" class="text-xs text-slate-400 font-normal">Prompt injections, DROP/UPDATE attempts</span></span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-400 text-xs">
+                    <span class="inline-flex items-center gap-1 text-red-400 font-mono font-medium mb-1"><i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i> <span data-i18n="row5_gen_status">Data Corruption Threat</span></span><br>
+                    <span data-i18n="row5_gen_desc">Generating queries directly from prompts is vulnerable to prompt injections and accidental destructive execution.</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-200 text-xs bg-brand-500/[0.03]">
+                    <span class="inline-flex items-center gap-1 text-brand-400 font-mono font-medium mb-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span data-i18n="row5_octa_status">Two Layers of Protection</span></span><br>
+                    <span data-i18n="row5_octa_desc">AST validation rejects modifying statements before they reach the database; queries run in a read-only transaction (Postgres, Greenplum, MySQL, ClickHouse); on MS SQL, Snowflake and BigQuery use a read-only role.</span>
+                  </td>
+                </tr>
+
+                <!-- Row 6: Compliance -->
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td class="py-4 px-6 font-medium text-white">
+                    <div class="flex items-center gap-2">
+                      <i data-lucide="lock" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                      <span><strong data-i18n="row6_title">Data Privacy & Compliance:</strong><br><span data-i18n="row6_sub" class="text-xs text-slate-400 font-normal">Banking secrecy, GDPR, HIPAA, PII</span></span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-slate-400 text-xs">
+                    <span class="inline-flex items-center gap-1 text-red-400 font-mono font-medium mb-1"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="row6_gen_status">Schema & Data Leakage</span></span><br>
+                    <span data-i18n="row6_gen_desc">Schemas and row samples are transmitted to public cloud LLM APIs without localization guarantees.</span>
+                  </td>
+                  <td class="py-4 px-6 text-slate-200 text-xs bg-brand-500/[0.03]">
+                    <span class="inline-flex items-center gap-1 text-brand-400 font-mono font-medium mb-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> <span data-i18n="row6_octa_status">On-Premise / Air-Gapped Ready</span></span><br>
+                    <span data-i18n="row6_octa_desc">Runs inside your corporate perimeter. With a local LLM, no schema, sample values or rows leave it.</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Terminal Section -->
+  <section id="demo" class="relative z-10 py-14 bg-dark-900/60 border-y border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <h2 data-i18n="demo_tag" class="text-xs font-mono uppercase tracking-wider text-brand-400 mb-3">EXAMPLE SESSION</h2>
+        <p data-i18n="demo_title" class="text-3xl font-bold text-white tracking-tight">How OctaSQL Breaks Down a Question</p>
+        <p data-i18n="demo_desc" class="mt-3 text-slate-400 text-xs sm:text-sm">
+          Select a business scenario to see how OctaSQL formulates hypotheses, validates queries in the AST sandbox, and produces a segment contribution report.
+        </p>
+        <p data-i18n="demo_disclaimer" class="mt-2 text-slate-500 text-xs italic">
+          Illustrative simulation: the scenarios, tables and figures below are sample data, not output of a live run.
+        </p>
+      </div>
+
+      <!-- Demo Case Selector Tabs -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+        <button onclick="switchTerminalCase('retail')" id="tab-retail" class="demo-tab active px-5 py-2.5 rounded-xl font-mono text-xs border border-brand-500 bg-brand-500/20 text-white transition-all flex items-center gap-2">
+          <i data-lucide="shopping-cart" class="w-4 h-4 text-brand-400"></i>
+          <span data-i18n="tab_retail">Case 1: B2B Retail Revenue Drop (-14.2%)</span>
+        </button>
+        <button onclick="switchTerminalCase('fintech')" id="tab-fintech" class="demo-tab px-5 py-2.5 rounded-xl font-mono text-xs border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-slate-500 transition-all flex items-center gap-2">
+          <i data-lucide="credit-card" class="w-4 h-4 text-accent-400"></i>
+          <span data-i18n="tab_fintech">Case 2: FinTech Churn Spike (+8.4%)</span>
+        </button>
+        <button onclick="switchTerminalCase('whatif')" id="tab-whatif" class="demo-tab px-5 py-2.5 rounded-xl font-mono text-xs border border-slate-700 bg-slate-800/60 text-slate-300 hover:border-slate-500 transition-all flex items-center gap-2">
+          <i data-lucide="trending-up" class="w-4 h-4 text-yellow-400"></i>
+          <span data-i18n="tab_whatif">Case 3: What-If Segment Baseline (Building Materials)</span>
+        </button>
+      </div>
+
+      <!-- Terminal Window Box -->
+      <div class="rounded-2xl border border-slate-700/80 bg-dark-950 shadow-2xl overflow-hidden font-mono text-xs sm:text-sm">
+        
+        <!-- Terminal Header -->
+        <div class="px-4 py-3 bg-dark-900 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+            <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+            <span class="ml-2 text-slate-400 text-xs hidden sm:inline">octasql deductive session [pid: 84920]</span>
+          </div>
+          <div class="flex items-center gap-3 text-slate-400 text-xs">
+            <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-400"></i> <span data-i18n="term_guardrails">AST check: on</span></span>
+            <span class="flex items-center gap-1"><i data-lucide="database" class="w-3.5 h-3.5 text-accent-400"></i> <span data-i18n="term_fabric">DuckDB state</span></span>
+          </div>
+        </div>
+
+        <!-- Terminal Body -->
+        <div id="terminal-content" class="p-6 space-y-4 text-slate-300 min-h-[420px] max-h-[550px] overflow-y-auto">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Terminal Footer Controls -->
+        <div class="px-6 py-4 bg-dark-900/90 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3 text-xs text-slate-400">
+            <i data-lucide="info" class="w-4 h-4 text-brand-400 shrink-0"></i>
+            <span data-i18n="demo_footer_info">Every generated query is validated by the AST parser before execution.</span>
+          </div>
+          <button onclick="reRunCurrentCase()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono flex items-center gap-2 border border-slate-700 transition-colors">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span data-i18n="btn_rerun">Replay</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- How It Works Architecture -->
+  <section id="how-it-works" class="relative z-10 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <h2 data-i18n="arch_tag" class="text-xs font-mono uppercase tracking-wider text-accent-400 mb-3">HEXAGONAL ARCHITECTURE</h2>
+        <p data-i18n="arch_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Four Steps from Question to Checked Answer</p>
+        <p data-i18n="arch_desc" class="mt-4 text-slate-400 text-sm sm:text-base">
+          How OctaSQL separates responsibilities between statistical scanning, local state fabric, and deductive planning.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Step 1 -->
+        <div class="p-6 rounded-2xl bg-dark-900/80 border border-slate-800 hover:border-brand-500/50 transition-all group flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 font-mono font-bold flex items-center justify-center text-lg mb-6 group-hover:scale-110 transition-transform">
+              01
+            </div>
+            <h3 data-i18n="step1_title" class="text-lg font-bold text-white mb-2">Single-Pass Introspection</h3>
+            <p data-i18n="step1_desc" class="text-sm text-slate-400 leading-relaxed">One batch query per table for distinct counts, null share and min/max/avg; top values for low-cardinality columns.</p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs font-mono text-brand-400 flex items-center gap-2">
+            <i data-lucide="database" class="w-3.5 h-3.5"></i>
+            <span data-i18n="step1_tag">Single Batch Query per Table</span>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="p-6 rounded-2xl bg-dark-900/80 border border-slate-800 hover:border-accent-500/50 transition-all group flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-accent-500/10 border border-accent-500/20 text-accent-400 font-mono font-bold flex items-center justify-center text-lg mb-6 group-hover:scale-110 transition-transform">
+              02
+            </div>
+            <h3 data-i18n="step2_title" class="text-lg font-bold text-white mb-2">DuckDB State Fabric</h3>
+            <p data-i18n="step2_desc" class="text-sm text-slate-400 leading-relaxed">Catalog in local DuckDB; BM25 search with domain synonyms, plus embeddings when configured.</p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs font-mono text-accent-400 flex items-center gap-2">
+            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            <span data-i18n="step2_tag">Okapi BM25 Matching</span>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="p-6 rounded-2xl bg-dark-900/80 border border-slate-800 hover:border-emerald-500/50 transition-all group flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono font-bold flex items-center justify-center text-lg mb-6 group-hover:scale-110 transition-transform">
+              03
+            </div>
+            <h3 data-i18n="step3_title" class="text-lg font-bold text-white mb-2">AST SQL Sandbox</h3>
+            <p data-i18n="step3_desc" class="text-sm text-slate-400 leading-relaxed">
+              LLM proposes deductive hypotheses, while the AST validator strictly enforces Read-Only safety rules prior to query dispatch.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs font-mono text-emerald-400 flex items-center gap-2">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+            <span data-i18n="step3_tag">Strict Read-Only Sandbox</span>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="p-6 rounded-2xl bg-dark-900/80 border border-slate-800 hover:border-indigo-500/50 transition-all group flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-mono font-bold flex items-center justify-center text-lg mb-6 group-hover:scale-110 transition-transform">
+              04
+            </div>
+            <h3 data-i18n="step4_title" class="text-lg font-bold text-white mb-2">Segment Contribution Analysis</h3>
+            <p data-i18n="step4_desc" class="text-sm text-slate-400 leading-relaxed">
+              Decomposition of a metric change by segment of a dimension: the exact contribution of each segment (region, category, channel) to the net change.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs font-mono text-indigo-400 flex items-center gap-2">
+            <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+            <span data-i18n="step4_tag">Segment Contribution Engine</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Benchmarks Section -->
+  <section id="benchmarks" class="relative z-10 py-16 bg-dark-900/40 border-y border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <h2 data-i18n="bench_tag" class="text-xs font-mono uppercase tracking-wider text-brand-400 mb-3">MEASURED RESULTS · OCTASQL 0.4.4</h2>
+        <p data-i18n="bench_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">The Same Model, Alone and Through OctaSQL</p>
+        <p data-i18n="bench_desc" class="mt-4 text-slate-400 text-sm sm:text-base">One general open-weights LLM, served locally, answers each question three ways: alone, with the bare schema; as an MCP client of OctaSQL, through get_context and run_sql; and through OctaSQL's own pipeline. A query counts as correct when it returns the same rows as a reference query.</p>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-dark-900/70 backdrop-blur-md overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-dark-950/80 border-b border-slate-800 text-slate-400 font-mono text-[11px] uppercase tracking-wider">
+              <tr class="border-b border-slate-800/60">
+                <th rowspan="2" data-i18n="bench_th_schema" class="py-4 px-6 font-semibold align-bottom">Question set</th>
+                <th colspan="3" data-i18n="bench_group_accuracy" class="pt-4 pb-2 px-4 font-semibold text-center text-slate-300">Share of correct answers</th>
+                <th colspan="2" data-i18n="bench_group_prompt" class="pt-4 pb-2 px-4 font-semibold text-center text-slate-300 border-l border-slate-800">Text the model reads per question, K characters</th>
+              </tr>
+              <tr>
+                <th data-i18n="bench_th_baseline" class="pb-4 px-4 font-semibold">Model alone</th>
+                <th data-i18n="bench_th_semantic" class="pb-4 px-4 font-semibold text-brand-400">Your model + OctaSQL</th>
+                <th data-i18n="bench_th_planned" class="pb-4 px-4 font-semibold text-accent-400">OctaSQL pipeline</th>
+                <th data-i18n="bench_th_prompt_alone" class="pb-4 px-4 font-semibold border-l border-slate-800">Without OctaSQL</th>
+                <th data-i18n="bench_th_prompt_octasql" class="pb-4 px-4 font-semibold text-emerald-400">With OctaSQL</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 text-slate-300 font-sans">
+              <tr class="hover:bg-slate-800/30 transition-colors">
+                <td data-i18n="bench_row1" class="py-4 px-6 font-medium text-white">33 public databases, 298 questions</td>
+                <td class="py-4 px-4 font-mono" data-num>43.5%</td>
+                <td class="py-4 px-4 font-mono font-bold text-brand-400" data-num>73.8%</td>
+                <td class="py-4 px-4 font-mono font-bold text-accent-400" data-num>73.5%</td>
+                <td class="py-4 px-4 font-mono border-l border-slate-800" data-num>≈1.2</td>
+                <td class="py-4 px-4 font-mono whitespace-nowrap"><span data-num>≈2.8</span> <span data-i18n="bench_prompt_more" class="text-slate-500 text-xs">notes added</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/30 transition-colors">
+                <td data-i18n="bench_row2" class="py-4 px-6 font-medium text-white">18 more public databases, 500 questions (held-out run)</td>
+                <td class="py-4 px-4 font-mono" data-num>38.5%</td>
+                <td class="py-4 px-4 font-mono text-slate-500">—</td>
+                <td class="py-4 px-4 font-mono font-bold text-accent-400" data-num>71.5%</td>
+                <td class="py-4 px-4 font-mono border-l border-slate-800" data-num>≈1.3</td>
+                <td class="py-4 px-4 font-mono whitespace-nowrap"><span data-num>≈4.0</span> <span data-i18n="bench_prompt_more" class="text-slate-500 text-xs">notes added</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/30 transition-colors">
+                <td data-i18n="bench_row3" class="py-4 px-6 font-medium text-white">Enterprise schema, 75 tables, questions in Russian</td>
+                <td class="py-4 px-4 font-mono" data-num>56.9%</td>
+                <td class="py-4 px-4 font-mono font-bold text-brand-400" data-num>91.7%</td>
+                <td class="py-4 px-4 font-mono font-bold text-accent-400" data-num>94.4%</td>
+                <td class="py-4 px-4 font-mono border-l border-slate-800" data-num>≈32.9</td>
+                <td class="py-4 px-4 font-mono font-bold text-emerald-400 whitespace-nowrap"><span data-num>≈2.5</span> <span class="text-xs">(−92%)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mt-6 max-w-4xl mx-auto space-y-3 text-xs sm:text-sm text-slate-400 leading-relaxed">
+        <p data-i18n="bench_modes">Your model + OctaSQL: OctaSQL hands the model the part of the schema the question needs, with notes on columns and values. The model writes the SQL; OctaSQL validates it, runs it read-only and returns hints, such as a filter value no row holds together with the values the column does hold. The model may correct its SQL twice. Own pipeline: OctaSQL calls the LLM itself and adds its own checks.</p>
+        <p data-i18n="bench_note1">Reading the table: through OctaSQL the same general model answers correctly about 30 percentage points more often (+30.3 on 33 databases, interval +20.1 to +40.5; +33.1 for the own pipeline on the 18 further databases). Most errors of the model alone are columns that do not exist. On the 75-table schema the prompt is 13 times shorter. On small schemas the whole schema fits, and OctaSQL sends more, not less: it adds notes and values.</p>
+        <p data-i18n="bench_note2" class="text-slate-500 italic">How it was measured: each question run twice, accuracy averaged across databases. Results will differ on your schema, questions and model. Prompt sizes are in characters, not tokens.</p>
+      </div>
+
+      <div id="agent-test" class="mt-14 max-w-4xl mx-auto">
+        <div class="text-center mb-6">
+          <h3 data-i18n="agent_tag" class="text-xs font-mono uppercase tracking-wider text-brand-400 mb-3">AGENT TEST · LOCAL MODEL</h3>
+          <p data-i18n="agent_title" class="text-2xl sm:text-3xl font-bold text-white tracking-tight">A Local Model as an Agent: With OctaSQL and Without</p>
+          <p data-i18n="agent_desc" class="mt-3 text-slate-400 text-sm">The same open-weight model runs as a tool-calling agent on the 75-table schema.</p>
+        </div>
+
+        <div id="local-benefits" class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl border border-brand-500/30 bg-dark-900/70">
+            <div class="flex items-center gap-2 text-brand-400 mb-3"><i data-lucide="minimize-2" class="w-4 h-4"></i><span data-i18n="benefit_ctx_tag" class="text-[11px] font-mono uppercase tracking-wider">Context window</span></div>
+            <div class="text-3xl font-extrabold font-mono text-white">−92%</div>
+            <p data-i18n="benefit_ctx_title" class="mt-2 text-sm font-semibold text-white">Small models fit large schemas</p>
+            <p data-i18n="benefit_ctx_desc" class="mt-2 text-xs text-slate-400 leading-relaxed">On 75 tables the model reads ≈2.5K characters of context instead of ≈33K for the whole schema, and answers no worse: 13 of 16 against 10 of 16 alone.</p>
+          </div>
+          <div class="p-6 rounded-2xl border border-accent-500/30 bg-dark-900/70">
+          <div class="flex items-center gap-2 text-accent-400 mb-3"><i data-lucide="cpu" class="w-4 h-4"></i><span data-i18n="benefit_hw_tag" class="text-[11px] font-mono uppercase tracking-wider">Hardware and speed</span></div>
+          <div class="text-3xl font-extrabold font-mono text-white">÷5 · ×2</div>
+            <p data-i18n="benefit_hw_title" class="mt-2 text-sm font-semibold text-white">Five times fewer tokens on your GPU</p>
+            <p data-i18n="benefit_hw_desc" class="mt-2 text-xs text-slate-400 leading-relaxed">≈10K tokens per question instead of ≈51K, 44 tool calls instead of 210: the same server answers about five times more questions.</p>
+          </div>
+          <div class="p-6 rounded-2xl border border-emerald-500/30 bg-dark-900/70">
+            <div class="flex items-center gap-2 text-emerald-400 mb-3"><i data-lucide="receipt" class="w-4 h-4"></i><span data-i18n="benefit_api_tag" class="text-[11px] font-mono uppercase tracking-wider">Model via API</span></div>
+            <div class="text-3xl font-extrabold font-mono text-white">÷5</div>
+            <p data-i18n="benefit_api_title" class="mt-2 text-sm font-semibold text-white">The same saving on a per-token bill</p>
+            <p data-i18n="benefit_api_desc" class="mt-2 text-xs text-slate-400 leading-relaxed">If the same open-weight model is paid per token through an API, the bill shrinks with the tokens: see the calculator below.</p>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-dark-900/70 backdrop-blur-md overflow-hidden shadow-2xl">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-dark-950/80 border-b border-slate-800 text-slate-400 font-mono text-[11px] uppercase tracking-wider">
+                <tr>
+                  <th data-i18n="agent_th_metric" class="py-4 px-6 font-semibold">Per 16 questions</th>
+                  <th data-i18n="agent_th_alone" class="py-4 px-4 font-semibold">Local model + SQL tool</th>
+                  <th data-i18n="agent_th_octasql" class="py-4 px-4 font-semibold text-brand-400">Local model + OctaSQL</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td data-i18n="agent_r1" class="py-4 px-6 font-medium text-white">Correct answers (run 1 / run 2)</td>
+                  <td class="py-4 px-4 font-mono">10 / 11</td>
+                  <td class="py-4 px-4 font-mono font-bold text-brand-400">13 / 12</td>
+                </tr>
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td data-i18n="agent_r5" class="py-4 px-6 font-medium text-white">Median time to an answer</td>
+                  <td class="py-4 px-4 font-mono" data-num>13.0 s</td>
+                  <td class="py-4 px-4 font-mono font-bold text-emerald-400"><span data-num>6.3 s</span> <span class="text-slate-500 text-xs">(×2)</span></td>
+                </tr>
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td data-i18n="agent_r2" class="py-4 px-6 font-medium text-white">Tokens, total (run 1 / run 2)</td>
+                  <td class="py-4 px-4 font-mono">≈819K / ≈781K</td>
+                  <td class="py-4 px-4 font-mono font-bold text-emerald-400">≈162K / ≈129K <span class="text-slate-500 text-xs">(÷5)</span></td>
+                </tr>
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                  <td data-i18n="agent_r3" class="py-4 px-6 font-medium text-white">Tool calls (run 1 / run 2)</td>
+                  <td class="py-4 px-4 font-mono">210 / 194</td>
+                  <td class="py-4 px-4 font-mono font-bold text-brand-400">44 / 38</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-5 space-y-3 text-xs sm:text-sm text-slate-400 leading-relaxed">
+          <p data-i18n="agent_note">Without OctaSQL the model re-learns the schema for every question.</p>
+          <p data-i18n="agent_cloud" class="text-slate-500 italic">Large cloud models are another case.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MCP Protocol Section -->
+  <section id="mcp" class="relative z-10 py-14 bg-dark-900/40 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <div class="lg:col-span-6 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-xs font-mono text-brand-400">
+            <i data-lucide="plug" class="w-3.5 h-3.5"></i>
+            <span data-i18n="mcp_tag">INTEGRATION OVER MCP</span>
+          </div>
+          <h2 data-i18n="mcp_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Built-In MCP Server</h2>
+          <p data-i18n="mcp_desc" class="text-slate-300 leading-relaxed text-sm sm:text-base">Connect OctaSQL to Claude Desktop, Claude Code, Cursor or your own agent over MCP, by stdio or Streamable HTTP at /mcp. With get_context and run_sql your model writes the SQL, so for these two tools OctaSQL needs no LLM key of its own.</p>
+
+          <div class="space-y-3 text-xs sm:text-sm text-slate-200">
+            <div class="flex items-center gap-3">
+              <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 shrink-0"></i>
+              <span data-i18n="mcp_tools">Tools: get_context, run_sql, query, observe_metric, drilldown_metric, observe_graph, simulate_what_if, deduce, get_catalog_snapshot, list_states</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 shrink-0"></i>
+              <span data-i18n="mcp_resources">Resources: semantic://states, semantic://catalog</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 shrink-0"></i>
+              <span data-i18n="mcp_prompts">Prompts: deductive_analysis, what_if_scenario</span>
+            </div>
+          </div>
+
+          <div class="pt-4 flex items-center gap-4">
+            <button onclick="copyMcpConfig()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs border border-slate-700 flex items-center gap-2 transition-colors">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+              <span id="copyMcpBtnText" data-i18n="btn_copy_mcp">Copy claude_desktop_config.json</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- MCP Code Preview -->
+        <div class="lg:col-span-6">
+          <div class="rounded-2xl border border-slate-700 bg-dark-950 p-5 shadow-2xl font-mono text-xs">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-slate-400">
+              <span class="flex items-center gap-2 text-slate-200 font-semibold">
+                <i data-lucide="file-code" class="w-4 h-4 text-accent-400"></i> claude_desktop_config.json
+              </span>
+              <span class="text-[11px] bg-slate-800 px-2 py-0.5 rounded text-slate-400">JSON-RPC 2.0</span>
+            </div>
+            <pre class="text-slate-300 leading-relaxed overflow-x-auto"><code class="language-json">{
+  <span class="text-brand-400">"mcpServers"</span>: {
+    <span class="text-accent-400">"octasql"</span>: {
+      <span class="text-brand-400">"command"</span>: <span class="text-emerald-300">"docker"</span>,
+      <span class="text-brand-400">"args"</span>: [
+        <span class="text-slate-300">"exec"</span>, <span class="text-slate-300">"-i"</span>, 
+        <span class="text-slate-300">"semantic-engine-api"</span>, 
+        <span class="text-slate-300">"octasql"</span>, <span class="text-slate-300">"mcp"</span>
+      ]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Security & Compliance Section -->
+  <section id="security" class="relative z-10 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <h2 data-i18n="sec_tag" class="text-xs font-mono uppercase tracking-wider text-emerald-400 mb-3">ENTERPRISE SECURITY</h2>
+        <p data-i18n="sec_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Data Stays Inside Your Perimeter</p>
+        <p data-i18n="sec_desc" class="mt-4 text-slate-400 text-sm sm:text-base">For organizations that keep data inside their own perimeter: banks, retail, telecom.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div class="p-8 rounded-2xl bg-dark-900/60 border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-6">
+              <i data-lucide="lock" class="w-6 h-6"></i>
+            </div>
+            <h3 data-i18n="sec1_title" class="text-xl font-bold text-white mb-3">Air-Gapped Isolation</h3>
+            <p data-i18n="sec1_desc" class="text-sm text-slate-400 leading-relaxed">Works offline with any OpenAI-compatible local endpoint (vLLM, Ollama, LM Studio); measured with Qwen models. With a local model, your data stays inside your own perimeter.</p>
+          </div>
+          <div data-i18n="sec1_tag_bot" class="mt-6 pt-4 border-t border-slate-800 text-xs font-mono text-emerald-400">
+            Runs fully on-premise
+          </div>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-dark-900/60 border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center mb-6">
+              <i data-lucide="key" class="w-6 h-6"></i>
+            </div>
+            <h3 data-i18n="sec2_title" class="text-xl font-bold text-white mb-3">Cryptographic Licensing</h3>
+            <p data-i18n="sec2_desc" class="text-sm text-slate-400 leading-relaxed">
+              Offline Ed25519 signature verification; a license can be locked to a node fingerprint (machine-id & MAC). The release image carries the vendor public key and ignores any override from the environment.
+            </p>
+          </div>
+          <div data-i18n="sec2_tag_bot" class="mt-6 pt-4 border-t border-slate-800 text-xs font-mono text-brand-400">
+            Zero-Network Verification
+          </div>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-dark-900/60 border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-accent-500/10 border border-accent-500/20 text-accent-400 flex items-center justify-center mb-6">
+              <i data-lucide="binary" class="w-6 h-6"></i>
+            </div>
+            <h3 data-i18n="sec3_title" class="text-xl font-bold text-white mb-3">Code Protection &amp; Hardened Core</h3>
+            <p data-i18n="sec3_desc" class="text-sm text-slate-400 leading-relaxed">
+              The release image ships the engine compiled to a native module (Nuitka) with no Python sources, which raises the bar for casual reverse engineering.
+            </p>
+          </div>
+          <div data-i18n="sec3_tag_bot" class="mt-6 pt-4 border-t border-slate-800 text-xs font-mono text-accent-400">
+            Native Compiled Release
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Roadmap & Upcoming Modules Section -->
+  <section id="roadmap" class="relative z-10 py-16 bg-dark-900/50 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-500/10 border border-accent-500/20 text-xs font-mono text-accent-400 mb-3">
+          <i data-lucide="map" class="w-3.5 h-3.5"></i>
+          <span data-i18n="roadmap_tag">ENGINEERING ROADMAP</span>
+        </div>
+        <p data-i18n="roadmap_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Upcoming Enterprise Modules</p>
+        <p data-i18n="roadmap_desc" class="mt-4 text-slate-400 text-sm sm:text-base">Modules in development or planned, and what has already shipped.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Roadmap Card 1: PII Masking -->
+        <div class="p-5 rounded-2xl bg-dark-950 border border-brand-500/40 hover:border-brand-400 transition-all relative overflow-hidden group shadow-xl flex flex-col justify-between">
+          <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand-500/10 rounded-full blur-2xl"></div>
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span data-i18n="rm_card1_tag" class="px-2.5 py-1 rounded-md bg-brand-500/10 text-brand-400 border border-brand-500/20 font-mono text-[11px] font-bold">PARTLY SHIPPED IN 0.4.1</span>
+              <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-brand-400"></i> <span data-i18n="rm_card1_badge">Compliance: 152-FZ / GDPR</span>
+              </span>
+            </div>
+            <h3 data-i18n="rm_card1_title" class="text-lg font-bold text-white mb-2">1. Personal Data Masking &amp; Tokenization</h3>
+            <p data-i18n="rm_card1_desc" class="text-xs sm:text-sm text-slate-400 leading-relaxed">Shipped in 0.4.1: masking of personal data in query results (email, phone, address; off by default, pii_masking). Planned: detection of more types and reversible tokenization before data reaches the LLM (152-FZ / GDPR / HIPAA).</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2 text-[11px] font-mono text-brand-400">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+            <span data-i18n="rm_card1_status">Result masking shipped · tokenization planned</span>
+          </div>
+        </div>
+
+        <!-- Roadmap Card 2: RBAC & RLS -->
+        <div class="p-5 rounded-2xl bg-dark-950 border border-slate-800 hover:border-accent-500/50 transition-all relative overflow-hidden group shadow-xl flex flex-col justify-between">
+          <div class="absolute -right-10 -top-10 w-32 h-32 bg-accent-500/5 rounded-full blur-2xl"></div>
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span data-i18n="rm_card2_tag" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[11px] font-bold">
+                PLANNED MODULE
+              </span>
+              <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="users" class="w-3.5 h-3.5 text-accent-400"></i> <span data-i18n="rm_card2_badge">Enterprise Security</span>
+              </span>
+            </div>
+            <h3 data-i18n="rm_card2_title" class="text-lg font-bold text-white mb-2">2. Granular RBAC & Row-Level Security (RLS)</h3>
+            <p data-i18n="rm_card2_desc" class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              Enterprise SSO integration (Active Directory, Keycloak, SAML 2.0) with AST-enforced policy injection. Automatically isolates organizational data slices by user role.
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2 text-[11px] font-mono text-accent-400">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            <span data-i18n="rm_card2_status">Planned</span>
+          </div>
+        </div>
+
+        <!-- Roadmap Card 3: audit log for SIEM -->
+        <div class="p-5 rounded-2xl bg-dark-950 border border-slate-800 hover:border-brand-500/50 transition-all relative overflow-hidden group shadow-xl flex flex-col justify-between">
+          <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand-500/5 rounded-full blur-2xl"></div>
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span data-i18n="rm_card3_tag" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[11px] font-bold">
+                PLANNED MODULE
+              </span>
+              <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-brand-400"></i> <span data-i18n="rm_card3_badge">SIEM & Security Audit</span>
+              </span>
+            </div>
+            <h3 data-i18n="rm_card3_title" class="text-lg font-bold text-white mb-2">3. Tamper-Evident Audit Log (SIEM Integration)</h3>
+            <p data-i18n="rm_card3_desc" class="text-xs sm:text-sm text-slate-400 leading-relaxed">Hash-chained, append-only query log with streaming JSON audit events into enterprise SIEM systems (Splunk, ELK, QRadar, KUMA).</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2 text-[11px] font-mono text-brand-400">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            <span data-i18n="rm_card3_status">Planned</span>
+          </div>
+        </div>
+
+        <!-- Roadmap Card 4: Semantic Vector Query Cache -->
+        <div class="p-5 rounded-2xl bg-dark-950 border border-slate-800 hover:border-accent-500/50 transition-all relative overflow-hidden group shadow-xl flex flex-col justify-between">
+          <div class="absolute -right-10 -top-10 w-32 h-32 bg-accent-500/5 rounded-full blur-2xl"></div>
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span data-i18n="rm_card4_tag" class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[11px] font-bold">
+                PARTLY SHIPPED IN 0.4.0
+              </span>
+              <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="zap" class="w-3.5 h-3.5 text-yellow-400"></i> <span data-i18n="rm_card4_badge">LLM Cost Optimization</span>
+              </span>
+            </div>
+            <h3 data-i18n="rm_card4_title" class="text-lg font-bold text-white mb-2">4. Plan Cache</h3>
+            <p data-i18n="rm_card4_desc" class="text-xs sm:text-sm text-slate-400 leading-relaxed">Shipped in 0.4.0: a plan cache in the local DuckDB catalog. A repeated question is answered from the stored plan, with at most a short LLM call (0–145 prompt characters, measured on 0.4.0); with an embedding endpoint a paraphrase finds the same plan. Planned: Redis/Qdrant backends and a cache shared across nodes.</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2 text-[11px] font-mono text-indigo-400">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            <span data-i18n="rm_card4_status">Plan cache shipped · shared backends planned</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive ROI & Savings Calculator -->
+  <section class="relative z-10 py-16 bg-dark-900/70 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <h2 data-i18n="roi_tag" class="text-xs font-mono uppercase tracking-wider text-brand-400 mb-3">TOKEN COST ESTIMATE</h2>
+        <p data-i18n="roi_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">LLM Token & API Cost Calculator</p>
+        <p data-i18n="roi_desc" class="mt-4 text-slate-400 text-sm sm:text-base">Estimate the input tokens your model saves when it gets OctaSQL's compact context instead of the whole schema.</p>
+      </div>
+
+      <div class="max-w-4xl mx-auto p-8 sm:p-10 rounded-3xl bg-dark-950 border border-slate-700 shadow-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+
+          <!-- Inputs -->
+          <div class="space-y-6">
+            <div>
+              <div data-i18n="roi_mode_label" class="text-sm text-slate-300 mb-2">How your model runs:</div>
+              <div class="grid grid-cols-2 gap-2" role="radiogroup">
+                <button type="button" id="roiModeGpu" role="radio" aria-checked="true" onclick="setRoiMode('gpu')" data-i18n="roi_mode_gpu" class="roi-mode px-3 py-2.5 rounded-xl border text-xs font-medium transition-colors">Own GPU (vLLM, Ollama)</button>
+                <button type="button" id="roiModeApi" role="radio" aria-checked="false" onclick="setRoiMode('api')" data-i18n="roi_mode_api" class="roi-mode px-3 py-2.5 rounded-xl border text-xs font-medium transition-colors">Same model via paid API</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-sm mb-2">
+                <span data-i18n="roi_queries_label" class="text-slate-300">Questions per day:</span>
+                <span id="queriesVal" class="font-mono font-bold text-brand-400">—</span>
+              </div>
+              <input type="range" id="queriesRange" min="50" max="5000" step="50" value="500" oninput="updateRoi()" onchange="updateRoi()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-500">
+            </div>
+
+            <div id="roiGpuInput">
+              <div class="flex justify-between text-sm mb-2">
+                <span data-i18n="roi_throughput_label" class="text-slate-300">Server throughput, tokens/s (prompt + output):</span>
+              </div>
+              <select id="throughputSelect" onchange="updateRoi()" class="w-full px-4 py-2.5 rounded-xl bg-dark-900 border border-slate-700 focus:border-brand-500 focus:outline-none text-white text-xs font-mono">
+                <option value="1000">1 000</option>
+                <option value="3000" selected>3 000</option>
+                <option value="10000">10 000</option>
+              </select>
+            </div>
+
+            <div id="roiApiInput" class="hidden">
+              <div class="flex justify-between text-sm mb-2">
+                <span data-i18n="roi_price_label" class="text-slate-300">Price per 1M tokens (prompt + output):</span>
+              </div>
+              <select id="priceSelect" onchange="updateRoi()" class="w-full px-4 py-2.5 rounded-xl bg-dark-900 border border-slate-700 focus:border-brand-500 focus:outline-none text-white text-xs font-mono">
+                <option value="0.2">$0.20</option>
+                <option value="0.5" selected>$0.50</option>
+                <option value="1">$1.00</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Output -->
+          <div class="p-6 rounded-2xl bg-gradient-to-br from-brand-950/50 to-accent-950/40 border border-brand-500/30 space-y-4">
+            <div id="roiHeadline" class="text-xs font-mono uppercase tracking-wider text-slate-400 text-center">—</div>
+            <div id="roiMain" class="text-4xl sm:text-5xl font-extrabold font-mono text-center text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-emerald-300 to-accent-400">—</div>
+            <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-800 text-left text-[11px]">
+              <div>
+                <div data-i18n="roi_without_label" class="text-slate-400">Without OctaSQL</div>
+                <div id="roiWithout" class="text-sm font-bold font-mono text-slate-200">—</div>
+              </div>
+              <div>
+                <div data-i18n="roi_with_label" class="text-brand-400">With OctaSQL</div>
+                <div id="roiWith" class="text-sm font-bold font-mono text-white">—</div>
+              </div>
+            </div>
+            <p data-i18n="roi_assumptions" class="text-[11px] text-slate-500 italic">Measured in the agent test above.</p>
+            <button onclick="openLicenseModal()" data-i18n="btn_roi_request" class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-medium text-xs transition-colors">Discuss Your Schema</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Pricing & Licensing Section -->
+  <section id="pricing" class="relative z-10 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <h2 data-i18n="pricing_tag" class="text-xs font-mono uppercase tracking-wider text-accent-400 mb-3">ON-PREMISE LICENSING</h2>
+        <p data-i18n="pricing_title" class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Licensing Options</p>
+        <p data-i18n="pricing_desc" class="mt-4 text-slate-400 text-sm sm:text-base">Every license includes the engine, the AST validator, the MCP server and the compiled release image; tiers differ in nodes, DBMS and support.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+        
+        <!-- Tier 1: Developer / Pilot -->
+        <div class="p-8 rounded-3xl bg-dark-900/60 border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div data-i18n="tier1_tag" class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">PILOT PROJECT</div>
+            <h3 data-i18n="tier1_title" class="text-2xl font-bold text-white mb-2">Developer / PoC</h3>
+            <p data-i18n="tier1_desc" class="text-xs text-slate-400 mb-6">For testing hypotheses and validating architecture on 1-2 data warehouses.</p>
+            <div class="text-3xl font-bold font-mono text-white mb-6">
+              <span data-i18n="tier1_price">On request</span> <span data-i18n="tier1_price_sub" class="text-xs text-brand-400 font-normal">Pilot License</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-300">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier1_f1">1 Enterprise Node (Node-Locked)</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier1_f2">Up to 2 DBMS (Postgres, ClickHouse)</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier1_f3">Deductive Analysis Module</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier1_f4">MCP Server (Claude / Cursor)</span></li>
+            </ul>
+          </div>
+          <button onclick="openLicenseModal('Developer PoC')" data-i18n="btn_tier1" class="mt-8 w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs border border-slate-700 transition-colors">
+            Contact Sales
+          </button>
+        </div>
+
+        <!-- Tier 2: Enterprise (Featured) -->
+        <div class="p-8 rounded-3xl bg-gradient-to-b from-brand-950/40 via-dark-900 to-accent-950/30 border-2 border-brand-500 relative flex flex-col justify-between shadow-2xl shadow-brand-500/10">
+          <div data-i18n="tier2_badge" class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-brand-500 text-dark-950 font-mono text-[11px] font-bold uppercase tracking-wider">RECOMMENDED</div>
+          <div>
+            <div data-i18n="tier2_tag" class="text-xs font-mono text-brand-400 uppercase tracking-wider mb-2">CORPORATE STANDARD</div>
+            <h3 data-i18n="tier2_title" class="text-2xl font-bold text-white mb-2">Enterprise On-Prem</h3>
+            <p data-i18n="tier2_desc" class="text-xs text-slate-400 mb-6">For production deployments inside closed enterprise security perimeters.</p>
+            <div class="text-3xl font-bold font-mono text-white mb-6">
+              <span data-i18n="tier2_price">Custom</span> <span data-i18n="tier2_price_sub" class="text-xs text-slate-400 font-normal">/ license</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-200">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier2_f1">Several nodes, a node-locked key for each</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier2_f2">All 7 DBMS for SQL, plus DuckDB/Parquet</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier2_f3">Segment Contribution Analysis & What-If</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier2_f4">Air-Gapped Operation with Local LLMs</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier2_f5">Helm Chart for Kubernetes</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier2_f6">Support under an agreed SLA</span></li>
+            </ul>
+          </div>
+          <button onclick="openLicenseModal('Enterprise On-Prem')" data-i18n="btn_tier2" class="mt-8 w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-white font-semibold text-xs shadow-lg shadow-brand-500/25 transition-all">
+            Request Enterprise Proposal
+          </button>
+        </div>
+
+        <!-- Tier 3: OEM / Custom -->
+        <div class="p-8 rounded-3xl bg-dark-900/60 border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div data-i18n="tier3_tag" class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">FOR VENDORS & INTEGRATORS</div>
+            <h3 data-i18n="tier3_title" class="text-2xl font-bold text-white mb-2">OEM / White-Label</h3>
+            <p data-i18n="tier3_desc" class="text-xs text-slate-400 mb-6">Embedding the deductive engine into your own B2B platforms and applications.</p>
+            <div class="text-3xl font-bold font-mono text-white mb-6">
+              <span data-i18n="tier3_price">Partnership</span> <span data-i18n="tier3_price_sub" class="text-xs text-slate-400 font-normal">/ custom</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-300">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier3_f1">Full White-Label Rebranding</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier3_f2">Custom Connectors to Legacy DWH</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier3_f3">Dedicated Solutions Architect</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-400"></i> <span data-i18n="tier3_f4">Joint Product Roadmap Alignment</span></li>
+            </ul>
+          </div>
+          <button onclick="openLicenseModal('OEM / White-Label')" data-i18n="btn_tier3" class="mt-8 w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs border border-slate-700 transition-colors">
+            Discuss Partnership
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="relative z-10 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="p-10 sm:p-14 rounded-3xl bg-gradient-to-r from-brand-900/50 via-dark-900 to-accent-900/50 border border-brand-500/40 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8 shadow-2xl">
+        <div class="space-y-3 text-center lg:text-left">
+          <h2 data-i18n="cta_title" class="text-2xl sm:text-3xl font-extrabold text-white">
+            Ready to Test OctaSQL on Your Data?
+          </h2>
+          <p data-i18n="cta_subtitle" class="text-slate-300 text-sm max-w-xl">
+            Request a pilot license and a test On-Premise key for a working distribution.
+          </p>
+        </div>
+        <button onclick="openLicenseModal()" class="shrink-0 px-8 py-4 rounded-xl bg-white text-dark-950 font-bold text-sm shadow-xl hover:bg-slate-100 hover:scale-105 transition-all flex items-center gap-2">
+          <span data-i18n="btn_cta">Contact Enterprise Sales</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  </main>
+
+  <footer class="relative z-10 border-t border-slate-800/80 bg-dark-950 py-12 text-slate-400 text-xs font-mono">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-md bg-brand-500/20 border border-brand-500/40 p-1 flex items-center justify-center text-white font-bold">
+          <svg class="w-full h-full text-brand-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.5L18.5 6.5L21 14L15.5 21L8.5 20.5L3 13.5L5.5 6L12 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.7"/>
+            <circle cx="12" cy="2.5" r="1.5" fill="#34d399"/>
+            <circle cx="18.5" cy="6.5" r="1.3" fill="#818cf8"/>
+            <circle cx="21" cy="14" r="1.4" fill="#34d399"/>
+            <circle cx="15.5" cy="21" r="1.3" fill="#818cf8"/>
+            <circle cx="8.5" cy="20.5" r="1.4" fill="#34d399"/>
+            <circle cx="3" cy="13.5" r="1.3" fill="#818cf8"/>
+            <circle cx="5.5" cy="6" r="1.4" fill="#34d399"/>
+            <circle cx="12" cy="11.5" r="2" fill="#ffffff"/>
+          </svg>
+        </div>
+        <span class="text-slate-200 font-bold">OctaSQL</span>
+        <span data-i18n="footer_copy">© 2026 OctaSQL. All rights reserved.</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#how-it-works" data-i18n="nav_architecture" class="hover:text-white transition-colors">Architecture</a>
+        <a href="#security" data-i18n="nav_security" class="hover:text-white transition-colors">Security</a>
+        <a href="#pricing" data-i18n="nav_pricing" class="hover:text-white transition-colors">Pricing</a>
+        <a href="javascript:void(0)" onclick="openLicenseModal()" data-i18n="footer_contact_sales" class="text-brand-400 hover:text-brand-300">Contact Sales</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lead Capture / License Modal -->
+  <div id="licenseModal" class="fixed inset-0 z-50 hidden bg-dark-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-lg rounded-3xl bg-dark-900 border border-slate-700 p-8 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+      
+      <button onclick="closeLicenseModal()" aria-label="Close" class="absolute top-6 right-6 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-6">
+        <div class="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center mb-4">
+          <i data-lucide="key" class="w-5 h-5"></i>
+        </div>
+        <h3 data-i18n="modal_title" class="text-xl font-bold text-white">Contact Enterprise Sales</h3>
+        <p data-i18n="modal_desc" class="text-xs text-slate-400 mt-1">
+          Fill in your organization details to request a commercial proposal.
+        </p>
+      </div>
+
+      <form id="licenseForm" onsubmit="handleLicenseSubmit(event)" class="space-y-4">
+        <div>
+          <label data-i18n="modal_company_label" class="block text-xs font-mono text-slate-300 mb-1">Company / Organization *</label>
+          <input type="text" id="companyInput" required placeholder="e.g. Acme Financial Group" data-i18n-placeholder="modal_company_placeholder" class="w-full px-4 py-2.5 rounded-xl bg-dark-950 border border-slate-700 focus:border-brand-500 focus:outline-none text-white text-xs">
+        </div>
+
+        <div>
+          <label data-i18n="modal_email_label" class="block text-xs font-mono text-slate-300 mb-1">Corporate Email *</label>
+          <input type="email" id="emailInput" required placeholder="name@company.com" data-i18n-placeholder="modal_email_placeholder" class="w-full px-4 py-2.5 rounded-xl bg-dark-950 border border-slate-700 focus:border-brand-500 focus:outline-none text-white text-xs">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label data-i18n="modal_dbms_label" class="block text-xs font-mono text-slate-300 mb-1">Primary DBMS</label>
+            <select id="dbInput" class="w-full px-4 py-2.5 rounded-xl bg-dark-950 border border-slate-700 focus:border-brand-500 focus:outline-none text-white text-xs">
+              <option value="PostgreSQL">PostgreSQL</option>
+              <option value="ClickHouse">ClickHouse</option>
+              <option value="Greenplum">Greenplum</option>
+              <option value="Snowflake">Snowflake</option>
+              <option value="Google BigQuery">Google BigQuery</option>
+              <option value="DuckDB">DuckDB / Parquet</option>
+              <option value="MS SQL">MS SQL Server</option>
+              <option value="MySQL">MySQL / MariaDB</option>
+            </select>
+          </div>
+          <div>
+            <label data-i18n="modal_plan_label" class="block text-xs font-mono text-slate-300 mb-1">Selected Plan</label>
+            <input type="text" id="planInput" value="Developer PoC" readonly class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs font-mono">
+          </div>
+        </div>
+
+        <input type="text" id="gotchaInput" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
+        <p id="licenseNotice" data-i18n="modal_notice_error" role="alert" class="hidden text-xs text-amber-300">We could not send your request. Please try again later.</p>
+        <p data-i18n="modal_privacy" class="text-[11px] text-slate-500">Your details are sent through Formspree to our sales team and used only to answer your request.</p>
+        <div class="pt-4">
+          <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-white font-semibold text-xs shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span data-i18n="modal_btn_submit">Send Request</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Success State -->
+      <div id="licenseSuccess" class="hidden text-center py-6 space-y-4">
+        <div class="w-12 h-12 rounded-full bg-brand-500/20 text-brand-400 mx-auto flex items-center justify-center">
+          <i data-lucide="check" class="w-6 h-6"></i>
+        </div>
+        <h4 data-i18n="modal_success_title" class="text-lg font-bold text-white">Request sent</h4>
+        <p data-i18n="modal_success_desc" class="text-xs text-slate-300">
+          Thank you. We received your request and will contact you at the email address you provided.
+        </p>
+        <button onclick="closeLicenseModal()" data-i18n="modal_btn_close" class="px-6 py-2 rounded-xl bg-slate-800 text-slate-200 text-xs font-medium">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Custom Scripts with version cache buster -->
+  <script src="js/i18n.js?v=3.2"></script>
+  <script src="js/app.js?v=3.2"></script>
+  <script src="js/nav-ticker.js?v=3.2"></script>
+</body>
+</html>
